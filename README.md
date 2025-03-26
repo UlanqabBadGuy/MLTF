@@ -1,6 +1,6 @@
 # The Group Project - Machine Learning in Trading and Finance
 ## Inroduction
-data file: data/Loan_Default/Loan_Default.csv
+data file: data/Loan_Default/Loan_Default.csv（https://www.kaggle.com/datasets/yasserh/loan-default-dataset/data）
 
 ## Methodology
 ### Model selection
@@ -109,3 +109,10 @@ data file: data/Loan_Default/Loan_Default.csv
 ### Evaluation Metrics
 
 ### Results
+
+
+### Work
+- 模型实现
+- 前后端可视化
+- PPT + 演讲
+- Report （后置）
