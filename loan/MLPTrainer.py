@@ -18,7 +18,7 @@ class LoanDefaultMLP(nn.Module):
             nn.Dropout(0.3),
             nn.Linear(64, 32),
             nn.ReLU(),
-            nn.Dropout(0.2),
+            nn.Dropout(0.5),
             nn.Linear(32, 1)
         )
 
@@ -27,7 +27,7 @@ class LoanDefaultMLP(nn.Module):
 
 
 class MLPTrainer:
-    def __init__(self, X_train, y_train, X_test, y_test, batch_size=64, lr=1e-3, epochs=2):
+    def __init__(self, X_train, y_train, X_test, y_test, batch_size=64, lr=1e-3, epochs=15):
         self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
         self.scaler = StandardScaler()
         self.batch_size = batch_size
