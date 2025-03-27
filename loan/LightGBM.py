@@ -11,15 +11,17 @@ import pandas as pd
 class LightGBMLoanModel:
     def __init__(self, categorical_features=None, params=None):
         self.categorical_features = categorical_features or []
-        self.model = LGBMClassifier(
+        default_params = dict(
             is_unbalance=True,
             random_state=42,
             n_estimators=200,
             learning_rate=0.05,
             num_leaves=64,
-            max_depth=-1,
-            **(params or {})
+            max_depth=-1
         )
+        default_params.update(params or {})
+        self.model = LGBMClassifier(**default_params)
+
 
     def fit(self, X_train, y_train):
         for col in self.categorical_features:

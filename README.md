@@ -172,11 +172,81 @@ df['rate_to_upfront_ratio'] = df['rate_of_interest'] / (df['Upfront_charges'] + 
 
 ---
 
-需要我帮你画一下三列之间的热力图/相关性分析吗？或者给你做个共线性检测（比如 VIF 分析）？只要你把数据给我或者贴几行我就可以开始。
-
 ### Evaluation Metrics
+本项目采用以下五项常见的分类性能指标来全面评估模型在贷款违约预测任务中的表现：
+####  1. Accuracy（准确率）
+表示模型预测正确的样本数在总样本数中的比例
+####  2. Precision（精确率）
+表示被模型预测为“违约”的样本中，实际真的违约的比例。适合关注“预测为正”的准确性场景。
+####  3. Recall（召回率）/ Sensitivity（敏感度）
+####  4. F1 Score（调和平均值）
+F1 是 Precision 和 Recall 的调和平均，是一种在不平衡数据中常用的综合指标：
+F1 Score 越高表示模型在精度和召回之间达成了更好的平衡。
+####  5. AUC-ROC（Area Under the ROC Curve）
+AUC 衡量模型在各种阈值下对样本排序的能力，
+- AUC 越接近 1 越好；
+- AUC = 0.5 表示随机猜测。
 
 ### Results
+
+#### 🔢 Model Performance Summary
+
+| Model              | Best AUC Score | Best Parameters                                      |
+|-------------------|----------------|------------------------------------------------------|
+| **LightGBM**       | 0.8981         | `{'num_leaves': 128, 'learning_rate': 0.05, 'max_depth': -1}` |
+| **XGBoost**        | 0.8968         | `{'learning_rate': 0.05, 'max_depth': 10, 'n_estimators': 200}` |
+| **CatBoost**       | 0.8964         | `{'learning_rate': 0.1, 'depth': 8}`                |
+| **MLP**            | 0.8927         | `{'batch_size': 64, 'lr': 0.001, 'epochs': 15}`     |
+| **LogisticRegression** | 0.8400         | `{'C': 10.0}`                                        |
+
+> 🔥 **Best overall model**: **LightGBM** with AUC = **0.8981**
+
+---
+
+#### 📈 Performance Comparison (AUC)
+
+![Best AUC per Model](res/BestAUCperModel.png)
+
+---
+
+#### ⚙️ Parameter Tuning Results (AUC by Param Combination)
+
+- **LightGBM**  
+  ![LightGBM Param AUC](res/LighGBMParamAUC.png)
+
+- **XGBoost**  
+  ![XGBoost Param AUC](res/XGBoostParamAUC.png)
+
+- **CatBoost**  
+  ![CatBoost Param AUC](res/CatBoostaParamAUC.png)
+
+- **MLP**  
+  ![MLP Param AUC](res/MLPParamAUC.png)
+
+- **Logistic Regression**  
+  ![LogReg Param AUC](res/LRegParamAUC.png)
+
+---
+
+#### 📊 Accuracy vs AUC of All Trials
+
+- **Interactive Hover Plot (Plotly)**  
+  ![GIF Interaction](res/fine_tune.gif)
+
+- **Static Comparison Plot**  
+  ![All Tuning Accuracy vs AUC](res/FineTuningACAUC.png)
+
+---
+
+#### 🔍 Top 20 Feature Importances (LightGBM)
+
+![Feature Importance](res/Importance.png)
+
+重点特征包括：
+- `LTV`, `income`, `Credit_Score`, `dtir1`, `loan_amount`, `property_value`
+- 这些变量在贷款违约风险预测中具有显著的解释力。
+
+---
 
 
 ### Work

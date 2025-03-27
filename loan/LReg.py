@@ -12,13 +12,14 @@ class LogisticRegressionLoanModel:
     def __init__(self, scale_data=True, params=None):
         self.scale_data = scale_data
         self.scaler = StandardScaler() if scale_data else None
-        self.model = LogisticRegression(
+        default_params = dict(
             class_weight='balanced',
             solver='liblinear',
             max_iter=200,
-            random_state=42,
-            **(params or {})
+            random_state=42
         )
+        default_params.update(params or {})
+        self.model = LogisticRegression(**default_params)
 
     def fit(self, X_train, y_train):
         if self.scale_data:

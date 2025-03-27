@@ -9,17 +9,19 @@ import pandas as pd
 
 class XGBoostLoanModel:
     def __init__(self, params=None):
-        self.model = XGBClassifier(
+        default_params = dict(
             use_label_encoder=False,
             eval_metric='logloss',
             scale_pos_weight=1,
             random_state=42,
             n_estimators=200,
             learning_rate=0.05,
-            max_depth=6,
-            **(params or {})
+            max_depth=6
         )
-        self.cleaned_columns = None  # To track original feature names
+        default_params.update(params or {})
+        self.model = XGBClassifier(**default_params)
+        self.cleaned_columns = None
+
 
     def _sanitize_column_names(self, df):
         cleaned_df = df.copy()

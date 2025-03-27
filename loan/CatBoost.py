@@ -10,15 +10,19 @@ import pandas as pd
 class CatBoostLoanModel:
     def __init__(self, categorical_features=None, params=None, verbose=0):
         self.categorical_features = categorical_features or []
-        self.model = CatBoostClassifier(
+
+        default_params = dict(
             iterations=200,
             learning_rate=0.05,
             depth=6,
             random_state=42,
             auto_class_weights='Balanced',
-            verbose=verbose,
-            **(params or {})
+            verbose=verbose
         )
+        default_params.update(params or {})
+
+        self.model = CatBoostClassifier(**default_params)
+
 
     def fit(self, X_train, y_train):
         self.model.fit(
