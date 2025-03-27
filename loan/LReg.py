@@ -35,17 +35,38 @@ class LogisticRegressionLoanModel:
             X_test = self.scaler.transform(X_test)
         return self.model.predict_proba(X_test)[:, 1]
 
-    def evaluate(self, X_test, y_test):
+    def evaluate(self, X_test, y_test, return_metrics=False):
+        if self.scale_data:
+            X_test_scaled = self.scaler.transform(X_test)
+        else:
+            X_test_scaled = X_test
+        
         y_pred = self.predict(X_test)
         y_pred_proba = self.predict_proba(X_test)
 
+        # 计算分类报告（包含 accuracy）
+        report = classification_report(y_test, y_pred, output_dict=True)
+        auc = roc_auc_score(y_test, y_pred_proba)
+        cm = confusion_matrix(y_test, y_pred)
+
+        # 提取 accuracy
+        accuracy = report['accuracy']
+        if return_metrics:
+            return {
+                'accuracy': accuracy,
+                'classification_report': report,
+                'auc': auc,
+                'confusion_matrix': cm
+            }
         print("\n📊 Classification Report:")
         print(classification_report(y_test, y_pred))
-        print("🎯 AUC-ROC:", roc_auc_score(y_test, y_pred_proba))
+        print("🎯 AUC-ROC:", auc)
         print("🧩 Confusion Matrix:")
-        print(confusion_matrix(y_test, y_pred))
+        print(cm)
+        print(f"✅ Accuracy: {accuracy:.4f}")
 
-        RocCurveDisplay.from_estimator(self.model, self.scaler.transform(X_test) if self.scale_data else X_test, y_test)
+        # 可视化 ROC 曲线和混淆矩阵
+        RocCurveDisplay.from_estimator(self.model, X_test_scaled, y_test)
         plt.title("ROC Curve")
         plt.grid(True)
         plt.show()
@@ -54,6 +75,8 @@ class LogisticRegressionLoanModel:
         plt.title("Confusion Matrix")
         plt.grid(False)
         plt.show()
+
+        
 
     def feature_importance(self, X_train):
         coef = self.model.coef_[0]

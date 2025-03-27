@@ -27,7 +27,7 @@ class LoanDefaultMLP(nn.Module):
 
 
 class MLPTrainer:
-    def __init__(self, X_train, y_train, X_test, y_test, batch_size=64, lr=1e-4, epochs=30):
+    def __init__(self, X_train, y_train, X_test, y_test, batch_size=64, lr=1e-4, epochs=15):
         self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
         self.scaler = StandardScaler()
         self.batch_size = batch_size
@@ -81,7 +81,8 @@ class MLPTrainer:
                 epoch_loss += loss.item()
             print(f"Epoch {epoch + 1}/{self.epochs} - Loss: {epoch_loss:.4f}")
 
-    def evaluate(self):
+    
+    def evaluate(self, return_metrics=False):
         self.model.eval()
         all_probs, all_preds, all_trues = [], [], []
 
@@ -96,8 +97,27 @@ class MLPTrainer:
                 all_preds.extend(preds)
                 all_trues.extend(y_batch.numpy())
 
+        # 计算各项指标
+        report = classification_report(all_trues, all_preds, output_dict=True)
+        auc = roc_auc_score(all_trues, all_probs)
+        cm = confusion_matrix(all_trues, all_preds)
+
+        # 提取准确率
+        accuracy = report['accuracy']
+        if return_metrics:
+            return {
+                'accuracy': accuracy,
+                'classification_report': report,
+                'auc': auc,
+                'confusion_matrix': cm
+            }
         print("\n📊 Classification Report:")
         print(classification_report(all_trues, all_preds))
-        print("🎯 AUC-ROC:", roc_auc_score(all_trues, all_probs))
+        print("🎯 AUC-ROC:", auc)
         print("🧩 Confusion Matrix:")
-        print(confusion_matrix(all_trues, all_preds))
+        print(cm)
+        print(f"✅ Accuracy: {accuracy:.4f}")
+
+        
+
+        
